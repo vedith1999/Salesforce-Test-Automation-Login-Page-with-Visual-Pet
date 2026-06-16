@@ -1,0 +1,12 @@
+target/
+.m2/
+*.log
+.DS_Store
+.idea/
+*.iml
+.vscode/
+screenshots/
+allure-results/
+allure-report/
+*.tmp
+*.bak

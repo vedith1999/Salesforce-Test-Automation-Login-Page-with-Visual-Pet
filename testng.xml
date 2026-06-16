@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Salesforce Security Regression Suite" verbose="1" parallel="none">
+    <listeners>
+        <listener class-name="com.acme.salesforce.listeners.ScreenshotOnFailureListener"/>
+    </listeners>
+
+    <test name="Salesforce Login And Forgot Password">
+        <classes>
+            <class name="com.acme.salesforce.tests.SalesforceLoginTests"/>
+            <class name="com.acme.salesforce.tests.SalesforceForgotPasswordTests"/>
+        </classes>
+    </test>
+</suite>
