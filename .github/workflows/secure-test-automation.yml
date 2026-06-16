@@ -1,6 +1,5 @@
 name: Secure Test Automation
-
-on: [push, pull_request]
+# Automated secure test execution with GitHub Secrets
 
 jobs:
   test:
