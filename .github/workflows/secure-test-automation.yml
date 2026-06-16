@@ -30,17 +30,4 @@ jobs:
             -Dsf.reset.submit.enabled=true \
             -DvisualAgent=false
 
-      - name: Upload test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results
-          path: target/surefire-reports/
-
-      - name: Upload screenshots on failure
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-screenshots
-          path: target/screenshots/
 
