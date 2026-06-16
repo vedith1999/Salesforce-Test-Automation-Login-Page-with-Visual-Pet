@@ -1,32 +1,29 @@
-name: Secure Test Automation
-# Automated secure test execution with GitHub Secrets
+name: Test Automation - Secure Run
+
+on:
+  push:
+    branches: [ codex/build-salesforce-login-automation, main ]
+  pull_request:
+  workflow_dispatch:
 
 jobs:
-  test:
+  run-tests:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Java
+      - name: Setup Java 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
-          distribution: 'temurin'
+          distribution: temurin
           cache: maven
 
-      - name: Run tests with secure credentials
+      - name: Execute Tests with Credentials
         env:
-          # Credentials are NEVER logged or exposed
           SF_USERNAME: ${{ secrets.SF_USERNAME }}
           SF_PASSWORD: ${{ secrets.SF_PASSWORD }}
           SF_RESET_USERNAME: ${{ secrets.SF_RESET_USERNAME }}
-        run: |
-          # Run tests headless in CI
-          mvn clean test \
-            -Dheadless=true \
-            -Dsf.reset.submit.enabled=true \
-            -DvisualAgent=false
-
-
+        run: mvn clean test -Dheadless=true -Dsf.reset.submit.enabled=true -DvisualAgent=false
