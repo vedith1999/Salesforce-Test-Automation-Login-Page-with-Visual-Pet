@@ -1,8 +1,8 @@
-# Salesforce Security Test Automation
+# Salesforce Test Automation Login Page with Visual Pet
 
-Selenium Java + Maven + TestNG framework for Salesforce login and forgot-password user journeys.
+Selenium Java + Maven + TestNG framework for Salesforce login and forgot-password user journeys with an animated visual agent pet for interactive demo mode.
 
-I interpreted "Melvin" as **Maven**. The suite uses the Page Object Model, safe credential handling, TestNG grouping, configurable browsers, screenshots on failure, and CI-ready defaults.
+The suite uses the Page Object Model, safe credential handling, TestNG grouping, configurable browsers, screenshots on failure, visual pet animation, and CI-ready defaults.
 
 ## Tech Stack
 
@@ -12,42 +12,58 @@ I interpreted "Melvin" as **Maven**. The suite uses the Page Object Model, safe 
 - TestNG
 - Selenium Manager for local browser driver resolution
 
-## Covered User Cases
+## Covered Test Cases
 
 - Salesforce login page loads over HTTPS and exposes expected controls.
-- Invalid login attempt does not authenticate and shows an error.
-- Real credential login is supported only when credentials are supplied securely.
+- Invalid login attempt does not authenticate and shows an error message.
+- Real credential login is supported only when credentials are supplied securely via environment variables or JVM properties.
 - Forgot-password link navigates to the reset-password page.
-- Forgot-password form enforces username input.
+- Forgot-password form enforces username input validation.
 - Real password-reset submission is opt-in only to avoid accidentally sending reset emails from automation.
+- Visual agent pet animation tracks test progress during demo mode.
 
 ## Run
+
+Execute the test suite with Maven:
 
 ```bash
 mvn clean test
 ```
 
-Useful runtime options:
+### Runtime Options
+
+Configure test execution with system properties:
 
 ```bash
+# Browser selection (default: chrome)
 mvn clean test -Dbrowser=chrome -Dheadless=true
+mvn clean test -Dbrowser=firefox
+mvn clean test -Dbrowser=safari
+
+# Salesforce environment (default: https://login.salesforce.com)
 mvn clean test -DbaseUrl=https://test.salesforce.com
 mvn clean test -DbaseUrl=https://your-domain.my.salesforce.com
 ```
 
-Visible demo mode with the animated agent pet:
+### Visual Agent Pet Demo Mode
+
+Run tests with an animated agent pet that tracks progress:
 
 ```bash
-mvn test -Dheadless=false -DvisualAgent=true -DvisualStepDelayMillis=1200
+mvn clean test -Dheadless=false -DvisualAgent=true -DvisualStepDelayMillis=1200
 ```
 
-Supported local browsers:
+This mode is useful for interactive demonstrations and visual validation of test flows.
 
-- `chrome`
+### Supported Browsers
+
+- `chrome` (default)
 - `firefox`
 - `safari`
 
-Remote Selenium Grid:
+### Remote Selenium Grid
+
+Execute tests against a remote Selenium Grid instance:
 
 ```bash
 mvn clean test -DremoteUrl=http://localhost:4444/wd/hub
@@ -82,16 +98,28 @@ mvn clean test -Dsf.reset.submit.enabled=true
 
 The GitHub Actions workflow in `.github/workflows/selenium-tests.yml` runs the TestNG suite on push, pull request, and manual dispatch. Store real credentials as repository secrets if you decide to enable credential-based tests in CI.
 
-## Git Push Checklist
+## Development & Git Workflow
+
+### Before Pushing Changes
+
+Verify code quality and tests pass:
 
 ```bash
 mvn clean test
 git status
-git add .
-git commit -m "Add Salesforce Selenium TestNG automation framework"
-git remote add origin <your-repository-url>
-git push -u origin master
 ```
+
+### Commit and Push
+
+```bash
+git add .
+git commit -m "Descriptive commit message"
+git push origin codex/build-salesforce-login-automation
+```
+
+### Create a Pull Request
+
+Push your feature branch and open a pull request against `main` for code review before merging.
 
 ## Security Notes
 
