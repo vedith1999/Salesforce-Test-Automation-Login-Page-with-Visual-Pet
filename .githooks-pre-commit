@@ -1,0 +1,51 @@
+#!/bin/bash
+# .git/hooks/pre-commit - Prevent accidental credential exposure
+# Run: chmod +x .git/hooks/pre-commit
+
+set -e
+
+# Color output
+RED='\033[0;31m'
+YELLOW='\033[1;33m'
+GREEN='\033[0;32m'
+NC='\033[0m'
+
+FILES_TO_CHECK=$(git diff --cached --name-only)
+
+# Check 1: Prevent committing .env file
+if echo "$FILES_TO_CHECK" | grep -q "^\.env$"; then
+    echo -e "${RED}❌ BLOCKED: Attempt to commit .env file${NC}"
+    echo "   .env contains credentials and should NEVER be committed"
+    echo "   Your changes are still staged, fix and try again:"
+    echo "   git reset HEAD .env"
+    exit 1
+fi
+
+# Check 2: Scan for common credential patterns in staged files
+CRED_PATTERNS=(
+    "SF_PASSWORD\s*=\s*['\"]" # Hardcoded passwords
+    "SF_USERNAME\s*=\s*['\"]" # Hardcoded usernames
+    "password\s*[:=]\s*['\"]" # Generic password
+    "api[_-]?key\s*[:=]\s*['\"]" # API keys
+    "secret\s*[:=]\s*['\"]" # Secrets
+)
+
+for file in $FILES_TO_CHECK; do
+    # Skip .env.example and documentation
+    if [[ "$file" == ".env.example" ]] || [[ "$file" == "*.md" ]]; then
+        continue
+    fi
+
+    # Check for credential patterns
+    for pattern in "${CRED_PATTERNS[@]}"; do
+        if git diff --cached "$file" | grep -iE "$pattern" > /dev/null; then
+            echo -e "${RED}❌ BLOCKED: Possible credentials found in $file${NC}"
+            echo "   Pattern: $pattern"
+            echo "   Use environment variables instead of hardcoding credentials"
+            exit 1
+        fi
+    done
+done
+
+echo -e "${GREEN}✓ Pre-commit checks passed${NC}"
+exit 0

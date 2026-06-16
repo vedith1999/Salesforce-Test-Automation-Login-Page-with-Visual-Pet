@@ -1,0 +1,45 @@
+name: Secure Test Automation
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Run tests with secure credentials
+        env:
+          # Credentials are NEVER logged or exposed
+          SF_USERNAME: ${{ secrets.SF_USERNAME }}
+          SF_PASSWORD: ${{ secrets.SF_PASSWORD }}
+          SF_RESET_USERNAME: ${{ secrets.SF_RESET_USERNAME }}
+        run: |
+          # Run tests headless in CI
+          mvn clean test \
+            -Dheadless=true \
+            -Dsf.reset.submit.enabled=true \
+            -DvisualAgent=false
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: target/surefire-reports/
+
+      - name: Upload screenshots on failure
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-screenshots
+          path: target/screenshots/

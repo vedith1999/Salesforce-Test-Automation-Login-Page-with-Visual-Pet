@@ -71,28 +71,40 @@ mvn clean test -DremoteUrl=http://localhost:4444/wd/hub
 
 ## Secure Test Data
 
-Do not commit Salesforce credentials. Use environment variables or JVM properties.
+**Important:** Never commit credentials to git. Use environment variables instead.
 
-Valid login test:
+### Quick Start (Secure)
 
 ```bash
-export SF_USERNAME="automation-user@example.com"
-export SF_PASSWORD="your-password"
-mvn clean test
+# 1. Copy the template
+cp .env.example .env
+
+# 2. Edit with your credentials (this file is git-ignored)
+nano .env
+
+# 3. Run tests
+./setup-env.sh test
 ```
 
-Equivalent JVM properties:
+### Manual Setup
+
+Provide credentials via environment variables:
 
 ```bash
-mvn clean test -Dsf.username="automation-user@example.com" -Dsf.password="your-password"
-```
+export SF_USERNAME="automation-user@sandbox.salesforce.com"
+export SF_PASSWORD="your-secure-password"
+export SF_RESET_USERNAME="automation-user@sandbox.salesforce.com"
 
-Forgot-password real submission is intentionally disabled by default. Enable it only for an approved test user:
-
-```bash
-export SF_RESET_USERNAME="automation-user@example.com"
+# Run tests
 mvn clean test -Dsf.reset.submit.enabled=true
 ```
+
+### For CI/CD (GitHub Actions)
+
+Store credentials as GitHub Secrets (Settings → Secrets) - never in code.
+The workflow uses them automatically: `.github/workflows/secure-test-automation.yml`
+
+**For detailed security setup, see [SECURE_CREDENTIALS.md](SECURE_CREDENTIALS.md)**
 
 ## CI
 

@@ -10,3 +10,13 @@ allure-results/
 allure-report/
 *.tmp
 *.bak
+
+# Sensitive files - NEVER commit
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.keystore
+credentials.json
+secrets/
